@@ -125,7 +125,7 @@ def audit_archive(path: Path, repo: str, expected: dict[str, str]) -> dict[str, 
         required = {
             "VERSION", "psx_game_version.txt", "project-manifest.toml", "game.toml",
             "catalog_identity.json", "README.md", "README-SETUP.txt",
-            "framework_pins.txt",
+            "framework_pins.txt", "recomplauncher.json",
         }
         if expected.get("openbios_required", False):
             required.add("psxrecomp/bios/OpenBIOS.LICENSE")

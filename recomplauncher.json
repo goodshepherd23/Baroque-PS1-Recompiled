@@ -1,0 +1,224 @@
+{
+  "$schema": "https://recomplauncher.com/schema/recomplauncher.json",
+  "format": 1,
+  "name": "Baroque Recompiled",
+  "repo": "goodshepherd23/Baroque-PS1-Recompiled",
+  "game": {
+    "kind": "iso",
+    "label": "Your PlayStation disc of Baroque: Yuganda Mousou (Japan, SLPM-86328) with the English v1.02 fan translation applied, as a .cue with both .bin tracks beside it.",
+    "check": {
+      "iso9660": "SLPM_863.28",
+      "ids": [
+        "SLPM-86328"
+      ]
+    },
+    "dumps": [
+      {
+        "name": "English v1.02",
+        "size": 646249632,
+        "crc32": "7f1ebddf"
+      }
+    ]
+  },
+  "prepare": {
+    "program": [
+      "Baroque_Recompiled.exe",
+      "Baroque_Recompiled"
+    ],
+    "args": [
+      "--prepare",
+      "--game={game}"
+    ],
+    "label": "Generating the game's code from your disc and building it (downloads the build tools the first time, about 10 minutes)",
+    "timeout": 3600
+  },
+  "start": {
+    "program": [
+      "build-release/Baroque_Recompiled.exe",
+      "build-release/Baroque_Recompiled",
+      "Baroque_Recompiled.exe",
+      "Baroque_Recompiled"
+    ],
+    "args": [
+      "--no-launcher",
+      "--disc",
+      "{game}"
+    ]
+  },
+  "config": [
+    {
+      "id": "main",
+      "format": "toml",
+      "file": [
+        {
+          "path": "{install}/build-release/settings.toml"
+        }
+      ]
+    }
+  ],
+  "saves": [
+    "{install}/saves"
+  ],
+  "folders": {
+    "saves": [
+      {
+        "path": "{install}/saves"
+      }
+    ]
+  },
+  "settings": [
+    {
+      "id": "window",
+      "label": "Window",
+      "group": "Picture",
+      "help": "Borderless fills your screen and switches apps quickly. Exclusive gives the game the screen to itself.",
+      "choices": [
+        {
+          "label": "Windowed",
+          "set": {
+            "video/fullscreen": "0"
+          }
+        },
+        {
+          "label": "Borderless",
+          "set": {
+            "video/fullscreen": "1"
+          }
+        },
+        {
+          "label": "Exclusive",
+          "set": {
+            "video/fullscreen": "2"
+          }
+        }
+      ],
+      "defaults": {
+        "video/fullscreen": "0"
+      }
+    },
+    {
+      "id": "resolution",
+      "label": "Internal resolution",
+      "group": "Picture",
+      "help": "Times the PlayStation's own resolution. 1x is the original look; 4x is about 960p.",
+      "choices": [
+        {
+          "label": "1x",
+          "set": {
+            "video/supersampling": "1"
+          }
+        },
+        {
+          "label": "2x",
+          "set": {
+            "video/supersampling": "2"
+          }
+        },
+        {
+          "label": "3x",
+          "set": {
+            "video/supersampling": "3"
+          }
+        },
+        {
+          "label": "4x",
+          "set": {
+            "video/supersampling": "4"
+          }
+        }
+      ],
+      "defaults": {
+        "video/supersampling": "1"
+      }
+    },
+    {
+      "id": "filtering",
+      "label": "Texture filtering",
+      "group": "Picture",
+      "help": "Smooth blends the blocky textures of walls and floors. Sharp keeps the PlayStation's pixels.",
+      "choices": [
+        {
+          "label": "Sharp",
+          "set": {
+            "video/texture_filtering": "\"nearest\""
+          }
+        },
+        {
+          "label": "Smooth",
+          "set": {
+            "video/texture_filtering": "\"bilinear\""
+          }
+        }
+      ],
+      "defaults": {
+        "video/texture_filtering": "\"nearest\""
+      }
+    },
+    {
+      "id": "screen",
+      "label": "Screen",
+      "group": "Picture",
+      "help": "Draw the picture as it is, or like an old TV.",
+      "choices": [
+        {
+          "label": "Plain",
+          "set": {
+            "video/crt_filter": "\"raw\""
+          }
+        },
+        {
+          "label": "CRT",
+          "set": {
+            "video/crt_filter": "\"crt\""
+          }
+        },
+        {
+          "label": "Composite",
+          "set": {
+            "video/crt_filter": "\"composite\""
+          }
+        },
+        {
+          "label": "Trinitron",
+          "set": {
+            "video/crt_filter": "\"trinitron\""
+          }
+        }
+      ],
+      "defaults": {
+        "video/crt_filter": "\"raw\""
+      }
+    },
+    {
+      "id": "vsync",
+      "label": "V-Sync",
+      "group": "Picture",
+      "help": "Off paces the game by its own clock, which avoids double speed on screens whose driver ignores V-Sync. On waits for your screen's refresh.",
+      "choices": [
+        {
+          "label": "Off",
+          "set": {
+            "video/vsync": "\"immediate\""
+          }
+        },
+        {
+          "label": "On",
+          "set": {
+            "video/vsync": "\"on\""
+          }
+        }
+      ],
+      "defaults": {
+        "video/vsync": "\"immediate\""
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "saves",
+      "label": "Memory cards",
+      "help": "Your two memory cards (card1.mcd and card2.mcd).",
+      "open": "saves"
+    }
+  ]
+}

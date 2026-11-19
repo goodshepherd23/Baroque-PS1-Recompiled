@@ -1,5 +1,7 @@
 # Baroque Recompiled
 
+<a href="https://recomplauncher.com"><picture><source media="(prefers-color-scheme: dark)" srcset="https://recomplauncher.com/assets/press/launcher/badge-light.svg"><img alt="Get it on RecompLauncher" src="https://recomplauncher.com/assets/press/launcher/badge-dark.svg" height="48"></picture></a>
+
 A native PC build of **Baroque: Yuganda Mousou** (PlayStation, Sting, 1999), made
 with the [PSXRecomp](https://github.com/mstan/psxrecomp) static recompiler and the
 shared [recomp-ui](https://github.com/mstan/recomp-ui) launcher.
@@ -36,6 +38,12 @@ No retail BIOS is needed: the build uses the bundled
 
 On Windows the setup wizard can download portable build tools. On Linux and macOS,
 install CMake, Ninja, Python 3 and a C/C++ compiler first.
+
+**With [RecompLauncher](https://recomplauncher.com):** install the recomp, drop your
+`.cue` on its setup screen, and it checks the disc, generates and builds the game
+without a window (`Baroque_Recompiled --prepare --game=<your .cue>`), and Play
+starts it directly. The resolution, filtering, screen and V-Sync settings are on the
+game's page. The release zip carries `recomplauncher.json` for this.
 
 ## Controls
 
