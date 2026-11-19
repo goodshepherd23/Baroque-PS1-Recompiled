@@ -1,0 +1,20 @@
+diff --git a/psxrecomp_cli.py b/psxrecomp_cli.py
+index cdd44e6..5ebd13d 100644
+--- a/psxrecomp_cli.py
++++ b/psxrecomp_cli.py
+@@ -224,7 +224,14 @@ def clamp_future_mtimes(
+                 continue
+             if mtime > stamp:
+                 try:
+-                    os.utime(p, (stamp, stamp), follow_symlinks=False)
++                    # Windows Python has no follow_symlinks for utime and
++                    # raises NotImplementedError; fall back to a plain utime.
++                    if os.utime in os.supports_follow_symlinks:
++                        os.utime(p, (stamp, stamp), follow_symlinks=False)
++                    elif not p.is_symlink():
++                        os.utime(p, (stamp, stamp))
++                    else:
++                        continue
+                     n += 1
+                 except OSError:
+                     pass

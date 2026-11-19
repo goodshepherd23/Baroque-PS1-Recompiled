@@ -130,6 +130,8 @@ jobs:
         grep -q _soft_stop_windows psxrecomp/psxrecomp_cli.py
         grep -q "steps off the 0..255 page" psxrecomp/runtime/src/gpu_gl_renderer.c
         grep -q "Galerians: Polygon" psxrecomp/runtime/src/gpu_gl_renderer.c
+        grep -q host_prepare_cli_or_return psxrecomp/host/psxrecomp_codegen_host.c
+        grep -q supports_follow_symlinks psxrecomp/psxrecomp_cli.py
     - name: Setup host mode (no game C / BIOS backends in CI)
       shell: bash
       run: bash psxrecomp/tools/ci/clear_generated.sh
