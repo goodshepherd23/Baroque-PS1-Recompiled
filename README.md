@@ -42,6 +42,17 @@ install CMake, Ninja, Python 3 and a C/C++ compiler first.
 This is the Japanese release, so **Circle confirms and Cross cancels** in menus.
 Keyboard and controller bindings are in the launcher's settings.
 
+## Longer view distance (optional)
+
+On the launcher's **Mods** page, the **Graphics** group has **Longer View Distance**
+(off by default). In the tower it draws corridors four times as far and pushes the
+darkness back to match, so about one more lit stretch of corridor shows where the
+original goes black. Past that stretch there is a further limit it does not change.
+
+It changes two things in the dungeon engine while it is loaded: the per-floor
+far-clip distance (multiplied by 4) and the eight reads of the distance-fade table
+(indexed by depth >> 10 instead of >> 8). Details are in `src/baroque_mods.c`.
+
 ## How the game's code runs
 
 The main program (`SLPM_863.28`) is compiled to native code. The town, tower and

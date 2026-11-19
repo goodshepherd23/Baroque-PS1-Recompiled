@@ -1,0 +1,22 @@
+format_version = 5
+id = "baroque.enhancements"
+version = "1.0.0"
+name = "Baroque Enhancements"
+author = "goodshepherd23"
+description = "Optional changes to Baroque (SLPM-86328, English v1.02) beyond the original game."
+resolver = "declarative"
+save_compatibility = "shared"
+
+[[target]]
+game_id = "SLPM-86328"
+
+[[feature]]
+id = "view-distance"
+name = "Longer View Distance"
+description = "In the tower, draws corridors four times as far and pushes the darkness back to match, so about one more lit stretch of corridor shows where the original goes black. The darkness that hides farther areas is part of the game's look, and past that stretch there is a further limit this does not change."
+group = "Graphics"
+default_enabled = false
+
+[[plugin]]
+feature = "view-distance"
+id = "baroque.enhancement.view-distance"
