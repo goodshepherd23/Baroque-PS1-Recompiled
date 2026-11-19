@@ -1,0 +1,62 @@
+# Baroque Recompiled - Baroque: Yuganda Mousou (PlayStation, Japan), SLPM-86328,
+# with the English v1.02 fan translation applied.
+# Autofilled by psxrecomp probe_disc.py, then: OpenBIOS (no retail BIOS dump
+# needed), one player, vsync = "off" (the runtime paces off a wall clock), and
+# overlay_cache = true: the town, tower and dungeon engines are loaded from
+# BIN00-BIN02/*.BIN at run time, run on the interpreter on first visit, and are
+# compiled in the background for the next one.
+
+[game]
+name = "Baroque"
+id = "SLPM-86328"
+players = 1
+exe = "disc/SLPM_863.28"
+disc = "disc/Baroque - Yuganda Mousou (English v1.02).cue"
+load_address = "0x80010000"
+entry_pc = "0x80010008"
+text_size = "0x00059000"
+stack_base = "0x801FFFF0"
+
+# Digests are for data Track 01 of the English v1.02 patched image.
+[prepare_disc]
+out_dir = "disc"
+bin_name = "Baroque - Yuganda Mousou (English v1.02) (Track 1).bin"
+cue_name = "Baroque - Yuganda Mousou (English v1.02).cue"
+boot_exe = "SLPM_863.28"
+known_sizes = [646249632]
+known_md5 = [
+  "942542bdad4b70e13e52772eebdcf63d",
+]
+known_sha1 = [
+  "e0552034b2709b41bc291289c441edb1600beb95",
+]
+known_crc32 = [
+  "7f1ebddf",
+]
+
+[recompiler]
+bios_config = "psxrecomp/bios/OpenBIOS.toml"
+seeds = "seeds/ghidra_funcs.txt"
+out_dir = "generated"
+strict = true
+
+[runtime]
+window_title = "Baroque Recompiled"
+memcard_dir = "saves"
+openbios = true
+overlay_cache = true
+
+[video]
+renderer = "opengl"
+aspect_ratio = "4:3"
+vsync = "off"
+
+[controller]
+default_mode = "digital"
+
+# Online mount gate: digests + track count + optional TOC fingerprint
+# (see docs/NETPLAY.md).
+[netplay]
+require_cue = true
+required_tracks = 2
+required_disc_fp = "92296e4c085e895cad7228765dd057446cd64bad696a0a4ccf7bb16ea20d4f45"

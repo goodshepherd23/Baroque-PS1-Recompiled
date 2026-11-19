@@ -1,0 +1,46 @@
+{
+  "format_version": 1,
+  "game": {
+    "name": "Baroque",
+    "id": "SLPM-86328",
+    "boot_exe": "SLPM_863.28"
+  },
+  "marketing": {
+    "description": "Baroque: a dark first-person dungeon crawler in which a nameless man descends the Neuro Tower in a world twisted by delusion. Developed by Sting. Japanese release with the English v1.02 fan translation.",
+    "publisher": "Sting",
+    "year": "1999",
+    "region": "Japan",
+    "players": 1
+  },
+  "rom_identity": {
+    "cue_name": "Baroque - Yuganda Mousou (English v1.02).cue",
+    "bin_name": "Baroque - Yuganda Mousou (English v1.02) (Track 1).bin",
+    "track_counts": [
+      2
+    ],
+    "require_cue": true,
+    "data_track": {
+      "size": 646249632,
+      "md5": "942542bdad4b70e13e52772eebdcf63d",
+      "sha1": "e0552034b2709b41bc291289c441edb1600beb95",
+      "crc32": "7f1ebddf"
+    },
+    "disc_fp": "92296e4c085e895cad7228765dd057446cd64bad696a0a4ccf7bb16ea20d4f45"
+  },
+  "exe": {
+    "load_address": "0x80010000",
+    "entry_pc": "0x80010008",
+    "text_size": "0x00059000",
+    "stack_base": "0x801FFFF0"
+  },
+  "seeds": {
+    "count": 797,
+    "source": "boot_exe_jal"
+  },
+  "warnings": [],
+  "notes": [
+    "entry_pc/load_address/text_size/stack_base taken from PS-X EXE header.",
+    "seeds are first-pass boot-EXE JAL targets (+ entry); expect to grow as overlays / runtime paths are discovered.",
+    "required_disc_fp is psxrecomp-toc-v1 (matches runtime DiscIdentity)."
+  ]
+}
