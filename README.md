@@ -10,7 +10,8 @@ This is the PlayStation release. For the Sega Saturn original, see
 [Baroque-SaturnRecomp](https://github.com/goodshepherd23/Baroque-SaturnRecomp).
 
 You must supply your own disc: the Japanese release **SLPM-86328** as a CUE/BIN
-dump (2 tracks), **with the English v1.02 fan translation applied**:
+dump (2 tracks) or a `.chd` made from one, **with the English v1.02 fan translation
+applied**:
 
 | Image | Serial | Tracks | Data track 01 MD5 |
 |---|---|---|---|
@@ -32,8 +33,8 @@ No retail BIOS is needed: the build uses the bundled
 1. Download the release ZIP for your platform and extract all of it into a
    writable folder.
 2. Start `Baroque_Recompiled` (`.exe` on Windows).
-3. Select `Baroque - Yuganda Mousou (English v1.02).cue` in the setup wizard.
-   Keep the CUE next to both BIN tracks.
+3. Select `Baroque - Yuganda Mousou (English v1.02).cue` (or your `.chd`) in the
+   setup wizard. Keep the CUE next to both BIN tracks.
 4. Run **Generate & rebuild** and wait. The game starts when it finishes.
 
 On Windows the setup wizard can download portable build tools. On Linux and macOS,
@@ -44,6 +45,14 @@ install CMake, Ninja, Python 3 and a C/C++ compiler first.
 without a window (`Baroque_Recompiled --prepare --game=<your .cue>`), and Play
 starts it directly. The resolution, filtering, screen and V-Sync settings are on the
 game's page. The release zip carries `recomplauncher.json` for this.
+
+## CHD discs
+
+A `.chd` made with MAME's `chdman createcd` from the CUE/BIN works too. Setup
+unpacks it to the CUE/BIN set in the project's `disc` folder (the same place a
+CUE/BIN is staged), checks the data track against the digest above and builds
+from that; the game itself then plays straight from your `.chd`. A CHD of this
+disc gives back the original tracks byte for byte.
 
 ## Controls
 

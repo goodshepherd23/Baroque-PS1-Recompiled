@@ -5,7 +5,7 @@
   "repo": "goodshepherd23/Baroque-PS1-Recompiled",
   "game": {
     "kind": "iso",
-    "label": "Your PlayStation disc of Baroque: Yuganda Mousou (Japan, SLPM-86328) with the English v1.02 fan translation applied, as a .cue with both .bin tracks beside it.",
+    "label": "Your PlayStation disc of Baroque: Yuganda Mousou (Japan, SLPM-86328) with the English v1.02 fan translation applied: a .cue with both .bin tracks beside it, or a .chd made from it.",
     "check": {
       "iso9660": "SLPM_863.28",
       "ids": [
