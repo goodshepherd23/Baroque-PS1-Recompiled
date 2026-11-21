@@ -1,0 +1,4 @@
+Recomp Achievements SDK, vendored unchanged from
+https://github.com/elripalda/RecompAchievements at commit faf094acdf1efb57d8db7c8187b4b47aa1501805 (sdk/, LICENSE, README.md).
+Recomp Achievements License 1.0 (LICENSE); rcheevos and cJSON under their own MIT licenses
+(sdk/third_party/*/LICENSE).

@@ -26,6 +26,11 @@
 #include <stdlib.h>
 
 #include "mod_plugins.h"
+#include "rl_achievements.h"
+
+#ifndef BQ_VERSION
+#define BQ_VERSION "dev"
+#endif
 
 #define BQ_FAR_ADDR       0x8006915Cu   /* gp - 0x7384 */
 #define BQ_FAR_COPY_ADDR  0x80069158u   /* gp - 0x7388 */
@@ -87,7 +92,48 @@ static void bq_view_distance(void) {
     }
 }
 
+/* Recomp Achievements (third_party/rl-achievements). RecompLauncher hosts the
+ * list of memory rules for this game; the library checks them once per frame
+ * against PlayStation memory and reports unlocks to the launcher over a local
+ * pipe. Started without RecompLauncher, every call returns straight away.
+ *
+ * Addresses in a PS1 list are rcheevos' PlayStation map: 0x000000-0x1FFFFF is
+ * the 2 MB of RAM (kernel area included), 0x200000-0x2003FF the scratchpad. */
+static uint32_t bq_ach_read(uint32_t address, uint8_t* buffer, uint32_t n,
+                            void* ud) {
+    uint32_t i;
+    (void)ud;
+    for (i = 0; i < n; ++i) {
+        const uint32_t a = address + i;
+        uint32_t guest;
+        if (a < 0x200000u) guest = 0x80000000u + a;
+        else if (a < 0x200400u) guest = 0x1F800000u + (a - 0x200000u);
+        else break;
+        buffer[i] = psx_mod_read_byte(guest);
+    }
+    return i;
+}
+
+static void bq_achievements(void) {
+    static int s_started;
+    static uint32_t s_loads;
+    if (!psx_mod_game_started()) return;
+    if (!s_started) {
+        s_started = 1;
+        s_loads = psx_savestate_load_count();
+        rl_ach_set_info("baroque-ps1-recompiled", BQ_VERSION);
+        rl_ach_init("psx", bq_ach_read, NULL);
+    }
+    /* A save state or rewind replaced the game: later unlocks are casual. */
+    if (psx_savestate_load_count() != s_loads) {
+        s_loads = psx_savestate_load_count();
+        rl_ach_casual("save_state");
+    }
+    rl_ach_frame();
+}
+
 PSX_MOD_CONSTRUCTOR(baroque_register_mods) {
     psx_mod_register_vblank_plugin("baroque.enhancement.view-distance",
                                    bq_view_distance);
+    psx_mod_register_vblank_plugin("baroque.achievements", bq_achievements);
 }

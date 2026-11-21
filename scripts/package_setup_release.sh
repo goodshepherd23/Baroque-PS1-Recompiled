@@ -98,4 +98,5 @@ exec bash "${PACKAGER}" \
   --project-file README.md \
   --project-file recomplauncher.json \
   --project-dir seeds \
+  --project-dir third_party \
   "${EXTRA_PROJECT[@]}"

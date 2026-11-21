@@ -43,6 +43,17 @@ psxrecomp_add_game_runtime(psx-runtime
         "${CMAKE_CURRENT_SOURCE_DIR}/src/baroque_log.c"
 )
 
+# Recomp Achievements (vendored SDK, see third_party/rl-achievements/VENDORED.txt).
+# Used by the "Recomp Achievements" feature in src/baroque_mods.c; it does
+# nothing unless the game was started from RecompLauncher.
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/third_party/rl-achievements/sdk"
+                 "${CMAKE_BINARY_DIR}/rl-achievements" EXCLUDE_FROM_ALL)
+target_link_libraries(psx-runtime PRIVATE rl_achievements)
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/VERSION" _BQ_VERSION)
+string(STRIP "${_BQ_VERSION}" _BQ_VERSION)
+set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/src/baroque_mods.c"
+    PROPERTIES COMPILE_DEFINITIONS "BQ_VERSION=\"${_BQ_VERSION}\"")
+
 # Clang PGO. psxrecomp_cli.py `rebuild --force-pgo` passes -DPSX_PGO=generate
 # then =use, but the pinned framework's runtime.cmake never reads PSX_PGO, so
 # without this block the "instrumented" build is a plain one and train writes

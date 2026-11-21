@@ -1,6 +1,6 @@
 format_version = 5
 id = "baroque.enhancements"
-version = "1.0.0"
+version = "1.1.0"
 name = "Baroque Enhancements"
 author = "goodshepherd23"
 description = "Optional changes to Baroque (SLPM-86328, English v1.02) beyond the original game."
@@ -20,3 +20,14 @@ default_enabled = false
 [[plugin]]
 feature = "view-distance"
 id = "baroque.enhancement.view-distance"
+
+[[feature]]
+id = "achievements"
+name = "Recomp Achievements"
+description = "Earn achievements while you play, when the game is started from RecompLauncher (recomplauncher.com/achievements). Started any other way it does nothing. Loading a save state or rewinding makes later unlocks count as Casual instead of Ranked."
+group = "Achievements"
+default_enabled = true
+
+[[plugin]]
+feature = "achievements"
+id = "baroque.achievements"
