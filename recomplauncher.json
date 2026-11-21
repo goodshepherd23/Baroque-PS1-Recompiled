@@ -64,6 +64,11 @@
       {
         "path": "{install}/saves"
       }
+    ],
+    "logs": [
+      {
+        "path": "{install}/build-release/logs"
+      }
     ]
   },
   "settings": [
@@ -219,6 +224,12 @@
       "label": "Memory cards",
       "help": "Your two memory cards (card1.mcd and card2.mcd).",
       "open": "saves"
+    },
+    {
+      "id": "logs",
+      "label": "Logs",
+      "help": "The game's last five log files, for bug reports.",
+      "open": "logs"
     }
   ]
 }

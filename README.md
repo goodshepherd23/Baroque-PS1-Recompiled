@@ -1,6 +1,6 @@
 # Baroque Recompiled
 
-<a href="https://recomplauncher.com"><picture><source media="(prefers-color-scheme: dark)" srcset="https://recomplauncher.com/assets/press/launcher/badge-light.svg"><img alt="Get it on RecompLauncher" src="https://recomplauncher.com/assets/press/launcher/badge-dark.svg" height="48"></picture></a>
+<a href="https://recomplauncher.com/game/baroque-ps1-recompiled"><picture><source media="(prefers-color-scheme: dark)" srcset="https://recomplauncher.com/assets/press/launcher/badge-light.svg"><img alt="Get it on RecompLauncher" src="https://recomplauncher.com/assets/press/launcher/badge-dark.svg" height="48"></picture></a>
 
 A native PC build of **Baroque: Yuganda Mousou** (PlayStation, Sting, 1999), made
 with the [PSXRecomp](https://github.com/mstan/psxrecomp) static recompiler and the
@@ -53,6 +53,12 @@ unpacks it to the CUE/BIN set in the project's `disc` folder (the same place a
 CUE/BIN is staged), checks the data track against the digest above and builds
 from that; the game itself then plays straight from your `.chd`. A CHD of this
 disc gives back the original tracks byte for byte.
+
+## Logs
+
+The game writes a log to `build-release/logs/` beside its executable
+(`Baroque_Recompiled-<date>-<time>.log`, the newest five are kept). Please attach
+the newest one to bug reports. Set `BAROQUE_NO_LOG=1` to turn it off.
 
 ## Controls
 

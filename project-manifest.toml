@@ -6,7 +6,7 @@ region = "Japan (English v1.02 fan translation)"
 implementation_state = "release_candidate_prepared"
 
 [release]
-version = "0.1.3"
+version = "0.1.4"
 status = "candidate"
 target_date = "2026-11-19"
 
