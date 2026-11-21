@@ -134,6 +134,7 @@ jobs:
         grep -q supports_follow_symlinks psxrecomp/psxrecomp_cli.py
         grep -q psxrecomp-chd2cue psxrecomp/recompiler/CMakeLists.txt
         grep -q "def unpack_chd" psxrecomp/psxrecomp_cli.py
+        grep -q psx_savestate_load_count psxrecomp/runtime/include/mod_plugins.h
         for p in patches/recomp-ui/*.patch; do
           git -C recomp-ui apply --whitespace=nowarn "../$p"
           echo "applied $p"

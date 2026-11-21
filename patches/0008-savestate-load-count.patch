@@ -1,0 +1,32 @@
+diff --git a/runtime/include/mod_plugins.h b/runtime/include/mod_plugins.h
+index a1e4645e..d331d282 100644
+--- a/runtime/include/mod_plugins.h
++++ b/runtime/include/mod_plugins.h
+@@ -28,6 +28,9 @@ void psx_mod_function_entry(struct CPUState* cpu, uint32_t address);
+ 
+ /* Narrow guest services available to trusted plugin callbacks. */
+ int psx_mod_game_started(void);
++/* Save-state and rewind loads completed so far (changes when the game state
++ * was replaced by a load). */
++uint32_t psx_savestate_load_count(void);
+ uint8_t psx_mod_read_byte(uint32_t address);
+ void psx_mod_write_byte(uint32_t address, uint8_t value);
+ uint16_t psx_mod_read_half(uint32_t address);
+diff --git a/runtime/src/main.cpp b/runtime/src/main.cpp
+index cd3a073a..2cdadb07 100644
+--- a/runtime/src/main.cpp
++++ b/runtime/src/main.cpp
+@@ -1029,7 +1029,13 @@ extern "C" void psx_frontend_on_savestate_notify(int is_load, int slot, int ok)
+     host_osd_push(buf, 2000);
+ }
+ 
++/* Completed save-state and rewind loads, for mod plugins that must know the
++ * game state was replaced (achievements count later unlocks as casual). */
++static volatile uint32_t s_savestate_loads = 0;
++extern "C" uint32_t psx_savestate_load_count(void) { return s_savestate_loads; }
++
+ extern "C" void psx_frontend_on_savestate_loaded(void) {
++    s_savestate_loads++;
+     mod_runtime_on_savestate_loaded();
+     s_disabled_frame_presented = false;
+     s_force_present_after_load = true;
