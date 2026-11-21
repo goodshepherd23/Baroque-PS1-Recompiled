@@ -132,6 +132,13 @@ jobs:
         grep -q "Galerians: Polygon" psxrecomp/runtime/src/gpu_gl_renderer.c
         grep -q host_prepare_cli_or_return psxrecomp/host/psxrecomp_codegen_host.c
         grep -q supports_follow_symlinks psxrecomp/psxrecomp_cli.py
+        grep -q psxrecomp-chd2cue psxrecomp/recompiler/CMakeLists.txt
+        grep -q "def unpack_chd" psxrecomp/psxrecomp_cli.py
+        for p in patches/recomp-ui/*.patch; do
+          git -C recomp-ui apply --whitespace=nowarn "../$p"
+          echo "applied $p"
+        done
+        grep -q '"\*.car", "\*.chd" }' recomp-ui/src/common/backends/imgui/launcher_imgui.cpp
     - name: Setup host mode (no game C / BIOS backends in CI)
       shell: bash
       run: bash psxrecomp/tools/ci/clear_generated.sh

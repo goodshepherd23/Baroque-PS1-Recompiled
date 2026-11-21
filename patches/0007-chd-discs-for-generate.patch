@@ -1,0 +1,222 @@
+diff --git a/psxrecomp_cli.py b/psxrecomp_cli.py
+index 5ebd13db..2d8bc7a4 100755
+--- a/psxrecomp_cli.py
++++ b/psxrecomp_cli.py
+@@ -988,6 +988,44 @@ def cmd_verify_disc(args: argparse.Namespace, progress: ProgressReporter) -> int
+     return EXIT_OK
+ 
+ 
++def unpack_chd(
++    project_root: Path,
++    chd: Path,
++    out_dir: Path,
++    cue_name: str,
++    progress: ProgressReporter,
++) -> Path:
++    """Unpack a CD .chd to a Redump-style .cue + "(Track N).bin" set in out_dir.
++
++    The rest of generate (digest check, prepare_disc, boot EXE) then works on
++    that set exactly as on a .cue/.bin dump. psxrecomp-chd2cue reads through the
++    runtime's ISOReader and is built from recompiler/ on first use.
++    """
++    try:
++        tool = _find_recompiler_tool(project_root, "psxrecomp-chd2cue", "PSXRECOMP_CHD2CUE")
++    except FileNotFoundError:
++        progress.log("Building psxrecomp-chd2cue (reads .chd discs)...")
++        _build_recompiler_targets(project_root, progress, ("psxrecomp-chd2cue",))
++        tool = _find_recompiler_tool(project_root, "psxrecomp-chd2cue", "PSXRECOMP_CHD2CUE")
++    progress.phase("unpack_chd", pct=0.06, message=f"Unpacking {chd.name}")
++    out_dir.mkdir(parents=True, exist_ok=True)
++    proc = subprocess.run(
++        [str(tool), str(chd), str(out_dir), cue_name],
++        cwd=str(project_root), capture_output=True, text=True,
++        encoding="utf-8", errors="replace",
++    )
++    out = (proc.stdout or "") + (proc.stderr or "")
++    cue = None
++    for line in out.splitlines():
++        if line.startswith("RESULT_CUE="):
++            cue = Path(line[len("RESULT_CUE="):].strip())
++        elif line.strip():
++            progress.log(line)
++    if proc.returncode != 0 or not cue or not cue.is_file():
++        raise RuntimeError(f"could not unpack {chd.name} (psxrecomp-chd2cue exit {proc.returncode})")
++    return cue.resolve()
++
++
+ def run_prepare_disc(
+     project_root: Path,
+     config: Path,
+@@ -1055,6 +1093,21 @@ def cmd_generate(args: argparse.Namespace, progress: ProgressReporter) -> int:
+         disc = disc.resolve()
+ 
+     progress.log(f"generate --disc {disc}")
++    if disc.suffix.lower() == ".chd" and disc.is_file():
++        # CHD: unpack to the .cue/.bin set that prepare_disc and the digest
++        # check expect, in the disc folder they stage into anyway.
++        try:
++            disc = unpack_chd(
++                project_root,
++                disc,
++                project_root / str(prep.get("out_dir") or "prepared_disc"),
++                str(prep.get("cue_name") or (disc.stem + ".cue")),
++                progress,
++            )
++        except Exception as exc:  # noqa: BLE001
++            progress.error(str(exc), code=EXIT_ERROR)
++            return EXIT_ERROR
++        progress.log(f"unpacked to {disc}")
+     progress.phase("verify", pct=0.05, message=f"Checking disc {disc.name}")
+     try:
+         if disc.is_file():
+diff --git a/recompiler/CMakeLists.txt b/recompiler/CMakeLists.txt
+index 676ac88b..16dad70d 100644
+--- a/recompiler/CMakeLists.txt
++++ b/recompiler/CMakeLists.txt
+@@ -147,6 +147,19 @@ if(PSXRECOMP_ENABLE_CHD)
+     elseif(MSVC)
+         target_link_options(psxrecomp PRIVATE /STACK:16777216)
+     endif()
++
++    # psxrecomp-chd2cue: unpack a .chd to a Redump-style .cue/.bin set so
++    # disc preparation (digests, boot EXE, CDDA tracks) can take a CHD.
++    add_executable(psxrecomp-chd2cue
++        src/main_chd2cue.cpp
++        ../runtime/src/cue_sheet.cpp
++        ../runtime/src/iso_reader.cpp
++    )
++    target_include_directories(psxrecomp-chd2cue PRIVATE
++        include
++        ../runtime/include
++    )
++    target_link_libraries(psxrecomp-chd2cue PRIVATE chdr-static)
+ endif()
+ 
+ # psxrecomp-analyze — developer-facing static function discovery.
+diff --git a/recompiler/src/main_chd2cue.cpp b/recompiler/src/main_chd2cue.cpp
+new file mode 100644
+index 00000000..a38f4e6b
+--- /dev/null
++++ b/recompiler/src/main_chd2cue.cpp
+@@ -0,0 +1,121 @@
++// psxrecomp-chd2cue: unpack a PS1 CD-ROM .chd into a Redump-style .cue with one
++// "<name> (Track N).bin" per track, so the disc preparation path (which checks
++// the data track against known Redump digests and keeps the CDDA tracks) can
++// take a CHD.
++//
++//   psxrecomp-chd2cue <disc.chd> <out_dir> <cue_basename.cue>
++//
++// Reads through the runtime's ISOReader, the same code that mounts CHDs for
++// play. Each track file starts at its INDEX 00 (pregap) like a Redump dump,
++// data tracks as raw MODE2/2352 sectors, audio as little-endian PCM. A CHD made
++// by chdman from a Redump .cue/.bin gives back the original data track bytes.
++// Prints "wrote <path>" lines and "RESULT_CUE=<path>" on success.
++
++#include "iso_reader.h"
++
++#include <cstdio>
++#include <cstdint>
++#include <filesystem>
++#include <fstream>
++#include <string>
++#include <vector>
++
++namespace fs = std::filesystem;
++
++static std::string msf(uint32_t lba) {
++    char buf[16];
++    std::snprintf(buf, sizeof(buf), "%02u:%02u:%02u", lba / (75 * 60),
++                  (lba / 75) % 60, lba % 75);
++    return buf;
++}
++
++int main(int argc, char** argv) {
++    if (argc != 4) {
++        std::fprintf(stderr,
++                     "usage: %s <disc.chd> <out_dir> <cue_basename.cue>\n",
++                     argc > 0 ? argv[0] : "psxrecomp-chd2cue");
++        return 2;
++    }
++    const std::string chd_path = argv[1];
++    const fs::path out_dir = fs::path(argv[2]);
++    const fs::path cue_name = fs::path(argv[3]);
++    if (fs::path(chd_path).extension() != ".chd" &&
++        fs::path(chd_path).extension() != ".CHD") {
++        std::fprintf(stderr, "error: not a .chd file: %s\n", chd_path.c_str());
++        return 1;
++    }
++
++    PS1::ISOReader reader;
++    if (!reader.Open(chd_path)) {
++        std::fprintf(stderr, "error: could not open CHD: %s\n", chd_path.c_str());
++        return 1;
++    }
++    const int tracks = reader.TrackCount();
++    const uint32_t total = reader.GetSectorCount();
++    if (tracks < 1 || total == 0) {
++        std::fprintf(stderr, "error: CHD has no CD tracks: %s\n", chd_path.c_str());
++        return 1;
++    }
++
++    std::error_code ec;
++    fs::create_directories(out_dir, ec);
++    const std::string stem = cue_name.stem().string();
++    std::string cue;
++    std::vector<uint8_t> sector(2352);
++
++    for (int t = 1; t <= tracks; ++t) {
++        const uint32_t first = reader.TrackPregapLBA(t);
++        const uint32_t index1 = reader.TrackStartLBA(t);
++        const uint32_t end = (t < tracks) ? reader.TrackPregapLBA(t + 1) : total;
++        if (end <= first || index1 < first || index1 >= end) {
++            std::fprintf(stderr, "error: bad track %d layout (%u..%u, index 1 at %u)\n",
++                         t, first, end, index1);
++            return 1;
++        }
++        const bool audio = reader.TrackIsAudio(t);
++        const std::string bin_name =
++            tracks == 1 ? stem + ".bin"
++                        : stem + " (Track " + std::to_string(t) + ").bin";
++        const fs::path bin_path = out_dir / fs::path(bin_name);
++        std::ofstream out(bin_path, std::ios::binary | std::ios::trunc);
++        if (!out) {
++            std::fprintf(stderr, "error: cannot write %s\n", bin_path.string().c_str());
++            return 1;
++        }
++        for (uint32_t lba = first; lba < end; ++lba) {
++            if (!reader.ReadRawSector(lba, sector.data())) {
++                std::fprintf(stderr, "error: read failed at sector %u\n", lba);
++                return 1;
++            }
++            out.write(reinterpret_cast<const char*>(sector.data()), 2352);
++        }
++        out.close();
++        if (!out) {
++            std::fprintf(stderr, "error: write failed: %s\n", bin_path.string().c_str());
++            return 1;
++        }
++        std::printf("wrote %s (%u sectors, %s)\n", bin_path.string().c_str(),
++                    end - first, audio ? "audio" : "data");
++        std::fflush(stdout);
++
++        char track_line[64];
++        std::snprintf(track_line, sizeof(track_line), "  TRACK %02d %s\n", t,
++                      audio ? "AUDIO" : "MODE2/2352");
++        cue += "FILE \"" + bin_name + "\" BINARY\n";
++        cue += track_line;
++        if (index1 > first) cue += "    INDEX 00 00:00:00\n";
++        cue += "    INDEX 01 " + msf(index1 - first) + "\n";
++    }
++
++    const fs::path cue_path = out_dir / cue_name;
++    std::ofstream cf(cue_path, std::ios::binary | std::ios::trunc);
++    cf << cue;
++    cf.close();
++    if (!cf) {
++        std::fprintf(stderr, "error: cannot write %s\n", cue_path.string().c_str());
++        return 1;
++    }
++    std::printf("wrote %s\nRESULT_CUE=%s\n", cue_path.string().c_str(),
++                fs::absolute(cue_path).string().c_str());
++    return 0;
++}

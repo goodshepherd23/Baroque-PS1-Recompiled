@@ -1,0 +1,46 @@
+diff --git a/src/common/backends/imgui/launcher_imgui.cpp b/src/common/backends/imgui/launcher_imgui.cpp
+index be37bd0..24a880d 100644
+--- a/src/common/backends/imgui/launcher_imgui.cpp
++++ b/src/common/backends/imgui/launcher_imgui.cpp
+@@ -8336,9 +8336,9 @@ void draw_setup_wizard_modal(LauncherModel* m, const LauncherTheme& th) {
+     if (multi_disc) {
+         ImGui::PopTextWrapPos();
+         static const char* kDiscPatterns[] = {"*.cue", "*.bin", "*.img",
+-                                              "*.iso", "*.car"};
+-        draw_setup_disc_frame(m, th, kDiscPatterns, 5,
+-                              "Disc image (.cue .bin .img .iso .car)",
++                                              "*.iso", "*.car", "*.chd"};
++        draw_setup_disc_frame(m, th, kDiscPatterns, 6,
++                              "Disc image (.cue .bin .img .iso .car .chd)",
+                               kPsxDiscNote);
+         ImGui::PushTextWrapPos(wrap_x);
+     } else if (plat == SETUP_PLAT_PSX) {
+@@ -8346,7 +8346,8 @@ void draw_setup_wizard_modal(LauncherModel* m, const LauncherTheme& th) {
+          * TextLinkOpenURL after a wrapped line leaves a huge empty gap in
+          * BeginPopupModal (Windows first-run wizard regression). */
+         ImGui::TextColored(col(th.text_muted),
+-            "NOTE: psxrecomp games require a .cue + .bin dump of the disc, "
++            "NOTE: psxrecomp games require a .cue + .bin dump of the disc "
++            "(or a .chd made from one), "
+             "or an official re-release image (.car, e.g. from the Steam "
+             "Special Edition). "
+             "Note the number of tracks required by this project; multitrack "
+@@ -8473,15 +8474,15 @@ void draw_setup_wizard_modal(LauncherModel* m, const LauncherTheme& th) {
+             } else {
+                 char buf[512];
+                 static const char* kPsxDiscPrep[] = {
+-                    "*.cue", "*.bin", "*.car" };
++                    "*.cue", "*.bin", "*.car", "*.chd" };
+                 static const char* kDumpPatterns[] = {
+                     "*.cue", "*.iso", "*.bin", "*.img", "*.car", "*.chd", "*.*" };
+                 const char* const* pats =
+                     (plat == SETUP_PLAT_PSX) ? kPsxDiscPrep : kDumpPatterns;
+-                const int npat = (plat == SETUP_PLAT_PSX) ? 3 : 7;
++                const int npat = (plat == SETUP_PLAT_PSX) ? 4 : 7;
+                 if (launcher_pick_file(
+                         plat == SETUP_PLAT_PSX
+-                            ? "Select disc (.cue/.bin/.car)"
++                            ? "Select disc (.cue/.bin/.car/.chd)"
+                             : "Select raw disc dump to convert",
+                         pats, npat,
+                         plat == SETUP_PLAT_PSX ? "PlayStation disc (.cue/.bin/.car)"
