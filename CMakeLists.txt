@@ -40,6 +40,7 @@ psxrecomp_add_game_runtime(psx-runtime
     GEN_FULL_GLOB "generated/SLPM_863.28_full_*.c"
     CODEGEN_SETUP_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/codegen_setup.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/baroque_mods.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/baroque_log.c"
 )
 
 # Clang PGO. psxrecomp_cli.py `rebuild --force-pgo` passes -DPSX_PGO=generate

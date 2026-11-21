@@ -39,7 +39,14 @@ void psx_game_codegen_relaunch_or_exit(const char* disc_path) {
     psxrecomp_codegen_host_relaunch_or_exit(disc_path);
 }
 
+void baroque_log_start(int argc, char** argv);   /* src/baroque_log.c */
+
 void psx_game_codegen_forward_if_built(int argc, char** argv) {
+#if defined(PSX_HAS_GAME_DISPATCH)
+    /* The built game (not the setup host, whose --prepare output a launcher
+     * reads): keep a log file in logs/ beside the executable. */
+    baroque_log_start(argc, argv);
+#endif
     psxrecomp_codegen_host_forward_if_built(&kCodegenConfig, argc, argv);
 }
 
