@@ -54,6 +54,17 @@ CUE/BIN is staged), checks the data track against the digest above and builds
 from that; the game itself then plays straight from your `.chd`. A CHD of this
 disc gives back the original tracks byte for byte.
 
+## Recomp Achievements
+
+Started from [RecompLauncher](https://recomplauncher.com/game/baroque-ps1-recompiled),
+the game supports [Recomp Achievements](https://github.com/elripalda/RecompAchievements):
+the launcher hosts the achievement list for this game and the game checks its rules
+against PlayStation memory every frame. Started any other way it does nothing.
+Loading a save state or rewinding makes later unlocks count as Casual instead of
+Ranked. It's the **Recomp Achievements** feature in the launcher's **Mods** page
+(Achievements group), on by default. The SDK is vendored in
+`third_party/rl-achievements` under the Recomp Achievements License 1.0.
+
 ## Logs
 
 The game writes a log to `build-release/logs/` beside its executable
