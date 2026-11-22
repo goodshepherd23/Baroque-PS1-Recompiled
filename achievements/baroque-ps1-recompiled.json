@@ -16,8 +16,6 @@
      "trigger": "0xH0bf699=1_0xH0bf698=17_d0xH0bf698=16"},
     {"id": 5, "title": "No Light Left", "description": "Reach floor 24 of the tower", "points": 25, "type": "progression",
      "trigger": "0xH0bf699=1_0xH0bf698=24_d0xH0bf698=23"},
-    {"id": 6, "title": "Floor Thirty-Two", "description": "Reach floor 32 of the tower", "points": 50, "type": "progression",
-     "trigger": "0xH0bf699=1_0xH0bf698=32_d0xH0bf698=31"},
     {"id": 7, "title": "Finding Your Feet", "description": "Reach level 5", "points": 5,
      "trigger": "0xH0bfe74=5_d0xH0bfe74=4"},
     {"id": 8, "title": "Hardened", "description": "Reach level 10", "points": 10,
