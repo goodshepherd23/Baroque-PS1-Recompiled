@@ -114,8 +114,63 @@ static uint32_t bq_ach_read(uint32_t address, uint8_t* buffer, uint32_t n,
     return i;
 }
 
+/* Cheats. The player block sits at 0x800BFE74 in the main EXE's data (checked
+ * against the game's own status screen and HUD code at 0x8003fca4):
+ *   +0x00 u8  level           +0x04 u32 EXP
+ *   +0x0C u16 HP now/max      +0x10 u16 Vitality now/max
+ *   +0x14 u16 Attack x2       +0x1A u16 Defence x2   (third value of each is
+ *                                                     the total with equipment,
+ *                                                     which the game recomputes)
+ * Nothing is written until a game is loaded (max HP 1-999), so the title screen
+ * and the intro are left alone. Using any cheat makes later achievement unlocks
+ * Casual. */
+#define BQ_PLAYER_HP   0x800BFE80u
+#define BQ_PLAYER_VT   0x800BFE84u
+#define BQ_PLAYER_ATK  0x800BFE88u
+#define BQ_PLAYER_DEF  0x800BFE8Eu
+
+static int s_bq_cheated;
+
+static int bq_in_game(void) {
+    uint16_t max_hp;
+    if (!psx_mod_game_started()) return 0;
+    max_hp = psx_mod_read_half(BQ_PLAYER_HP + 2);
+    return max_hp > 0 && max_hp <= 999;
+}
+
+/* Keeps "now" at "max" for a now/max pair; returns 1 when it wrote. */
+static int bq_fill(uint32_t addr) {
+    uint16_t now = psx_mod_read_half(addr), max = psx_mod_read_half(addr + 2);
+    if (max == 0 || max > 999 || now >= max) return 0;
+    psx_mod_write_half(addr, max);
+    return 1;
+}
+
+static void bq_cheat_hp(void) {
+    if (bq_in_game() && bq_fill(BQ_PLAYER_HP)) s_bq_cheated = 1;
+}
+
+static void bq_cheat_vitality(void) {
+    if (bq_in_game() && bq_fill(BQ_PLAYER_VT)) s_bq_cheated = 1;
+}
+
+static void bq_cheat_stats(void) {
+    unsigned i;
+    if (!bq_in_game()) return;
+    for (i = 0; i < 2; i++) {
+        if (psx_mod_read_half(BQ_PLAYER_ATK + 2 * i) != 99) {
+            psx_mod_write_half(BQ_PLAYER_ATK + 2 * i, 99);
+            s_bq_cheated = 1;
+        }
+        if (psx_mod_read_half(BQ_PLAYER_DEF + 2 * i) != 99) {
+            psx_mod_write_half(BQ_PLAYER_DEF + 2 * i, 99);
+            s_bq_cheated = 1;
+        }
+    }
+}
+
 static void bq_achievements(void) {
-    static int s_started;
+    static int s_started, s_cheat_reported;
     static uint32_t s_loads;
     if (!psx_mod_game_started()) return;
     if (!s_started) {
@@ -129,6 +184,10 @@ static void bq_achievements(void) {
         s_loads = psx_savestate_load_count();
         rl_ach_casual("save_state");
     }
+    if (s_bq_cheated && !s_cheat_reported) {
+        s_cheat_reported = 1;
+        rl_ach_casual("cheats");
+    }
     rl_ach_frame();
 }
 
@@ -136,4 +195,8 @@ PSX_MOD_CONSTRUCTOR(baroque_register_mods) {
     psx_mod_register_vblank_plugin("baroque.enhancement.view-distance",
                                    bq_view_distance);
     psx_mod_register_vblank_plugin("baroque.achievements", bq_achievements);
+    psx_mod_register_vblank_plugin("baroque.cheat.infinite-hp", bq_cheat_hp);
+    psx_mod_register_vblank_plugin("baroque.cheat.infinite-vitality",
+                                   bq_cheat_vitality);
+    psx_mod_register_vblank_plugin("baroque.cheat.max-stats", bq_cheat_stats);
 }

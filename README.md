@@ -65,6 +65,23 @@ Ranked. It's the **Recomp Achievements** feature in the launcher's **Mods** page
 (Achievements group), on by default. The SDK is vendored in
 `third_party/rl-achievements` under the Recomp Achievements License 1.0.
 
+Addresses for list authors (rcheevos PlayStation map, RAM = address − 0x80000000):
+
+| Value | Address | Size |
+|---|---|---|
+| Location: low byte = floor, high byte = region (0x01 = tower) | `0x0BF698` | 16-bit |
+| Level | `0x0BFE74` | 8-bit |
+| EXP | `0x0BFE78` | 32-bit |
+| HP now / max | `0x0BFE80` / `0x0BFE82` | 16-bit |
+| Vitality now / max | `0x0BFE84` / `0x0BFE86` | 16-bit |
+
+## Cheats (optional)
+
+The launcher's **Mods** page has a **Cheats** group, all off by default:
+**Infinite HP**, **Infinite Vitality** and **Attack and Defence 99** (the last one
+is kept in your save, so turning it off does not undo it). Turning on any cheat
+makes achievements you unlock afterwards count as Casual.
+
 ## Logs
 
 The game writes a log to `build-release/logs/` beside its executable

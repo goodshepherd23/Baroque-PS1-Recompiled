@@ -31,3 +31,36 @@ default_enabled = true
 [[plugin]]
 feature = "achievements"
 id = "baroque.achievements"
+
+[[feature]]
+id = "infinite-hp"
+name = "Infinite HP"
+description = "Refills your HP to its maximum every frame. Turning on any cheat makes achievements you unlock afterwards count as Casual instead of Ranked."
+group = "Cheats"
+default_enabled = false
+
+[[plugin]]
+feature = "infinite-hp"
+id = "baroque.cheat.infinite-hp"
+
+[[feature]]
+id = "infinite-vitality"
+name = "Infinite Vitality"
+description = "Keeps Vitality full, so it never runs down and starts draining HP. Turning on any cheat makes achievements you unlock afterwards count as Casual instead of Ranked."
+group = "Cheats"
+default_enabled = false
+
+[[plugin]]
+feature = "infinite-vitality"
+id = "baroque.cheat.infinite-vitality"
+
+[[feature]]
+id = "max-stats"
+name = "Attack and Defence 99"
+description = "Sets your base Attack and Defence to 99. The new values are kept in your save, so turning this off later does not put them back. Turning on any cheat makes achievements you unlock afterwards count as Casual instead of Ranked."
+group = "Cheats"
+default_enabled = false
+
+[[plugin]]
+feature = "max-stats"
+id = "baroque.cheat.max-stats"
