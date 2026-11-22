@@ -135,6 +135,7 @@ jobs:
         grep -q psxrecomp-chd2cue psxrecomp/recompiler/CMakeLists.txt
         grep -q "def unpack_chd" psxrecomp/psxrecomp_cli.py
         grep -q psx_savestate_load_count psxrecomp/runtime/include/mod_plugins.h
+        grep -q grep -q "w > fb_w + 16" psxrecomp/runtime/src/gpu_gl_renderer.c
         for p in patches/recomp-ui/*.patch; do
           git -C recomp-ui apply --whitespace=nowarn "../$p"
           echo "applied $p"

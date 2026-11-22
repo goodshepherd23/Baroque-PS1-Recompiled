@@ -1,0 +1,17 @@
+diff --git a/runtime/src/gpu_gl_renderer.c b/runtime/src/gpu_gl_renderer.c
+index 9eb847aa..a255adcc 100644
+--- a/runtime/src/gpu_gl_renderer.c
++++ b/runtime/src/gpu_gl_renderer.c
+@@ -2443,6 +2443,12 @@ static int depth24_is_fb_transfer(int x, int y, int w, int h) {
+         if (x0 + w <= dx || x0 >= dx + fb_w || y0 + h <= dy || y0 >= dy + fb_h)
+             return 0;
+     }
++    /* An RGB888 movie frame is at most the 24-bit scanout width. Anything
++     * wider is a 15-bit image the game uploads before switching back (Baroque
++     * sends its 640x480 title as two 640x240 halves while GP1 is still in
++     * 24-bit after a 320-wide movie, fb_w 480): skipping it left the title's
++     * top half only in the CPU mirror, and the band clear on leave wiped it. */
++    if (w > fb_w + 16) return 0;
+     /* MotK: 768×128 class blits; allow slack. */
+     if (h >= fb_h - 8 && h <= fb_h + 16 && w >= (fb_w * 3) / 4) return 1;
+     if ((int64_t)w * (int64_t)h >= ((int64_t)fb_w * fb_h) / 2) return 1;
