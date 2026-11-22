@@ -1,0 +1,31 @@
+{
+  "format": 1,
+  "game": "baroque-ps1-recompiled",
+  "source": "memory",
+  "console": "psx",
+  "copies": ["SLPM-86328"],
+  "versions": ">=0.1.5",
+  "achievements": [
+    {"id": 1, "title": "Through the Door", "description": "Go down to the first floor of the tower", "points": 5, "type": "progression",
+     "trigger": "0xH0bf699=1_0xH0bf698=1_d0xH0bf698=0"},
+    {"id": 2, "title": "Five Down", "description": "Reach floor 5 of the tower", "points": 5, "type": "progression",
+     "trigger": "0xH0bf699=1_0xH0bf698=5_d0xH0bf698=4"},
+    {"id": 3, "title": "Ten Down", "description": "Reach floor 10 of the tower", "points": 10, "type": "progression",
+     "trigger": "0xH0bf699=1_0xH0bf698=10_d0xH0bf698=9"},
+    {"id": 4, "title": "Deeper Still", "description": "Reach floor 17 of the tower", "points": 10, "type": "progression",
+     "trigger": "0xH0bf699=1_0xH0bf698=17_d0xH0bf698=16"},
+    {"id": 5, "title": "No Light Left", "description": "Reach floor 24 of the tower", "points": 25, "type": "progression",
+     "trigger": "0xH0bf699=1_0xH0bf698=24_d0xH0bf698=23"},
+    {"id": 6, "title": "Floor Thirty-Two", "description": "Reach floor 32 of the tower", "points": 50, "type": "progression",
+     "trigger": "0xH0bf699=1_0xH0bf698=32_d0xH0bf698=31"},
+    {"id": 7, "title": "Finding Your Feet", "description": "Reach level 5", "points": 5,
+     "trigger": "0xH0bfe74=5_d0xH0bfe74=4"},
+    {"id": 8, "title": "Hardened", "description": "Reach level 10", "points": 10,
+     "trigger": "0xH0bfe74=10_d0xH0bfe74=9"},
+    {"id": 9, "title": "Seasoned", "description": "Reach level 15", "points": 25,
+     "trigger": "0xH0bfe74=15_d0xH0bfe74=14"},
+    {"id": 10, "title": "Twenty Levels Deep", "description": "Reach level 20", "points": 50,
+     "trigger": "0xH0bfe74=20_d0xH0bfe74=19"}
+  ],
+  "rich_presence": "Format:Num\nFormatType=VALUE\n\nDisplay:\n?0xH0bf699=1_0xH0bf698>0?Tower floor @Num(0xH0bf698), level @Num(0xH0bfe74)\n?0xH0bf699=1?At the tower door, level @Num(0xH0bfe74)\n?0xH0bfe74>0?Outside the tower, level @Num(0xH0bfe74)\nAt the title screen\n"
+}
