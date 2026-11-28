@@ -1,0 +1,18 @@
+{
+  "$schema": "https://recomp.fyi/schema/v1.json",
+  "game": "Baroque",
+  "wikidata": "Q2749298",
+  "system": "PS1",
+  "type": "recomp",
+  "original": {
+    "region": "Japan",
+    "serial": "SLPM-86328",
+    "revision": "English v1.02 fan translation applied"
+  },
+  "project": "Baroque Recompiled",
+  "status": "playable",
+  "targets": ["Windows", "Linux", "macOS"],
+  "toolchain": "Psxrecomp",
+  "approach": "Static recompilation of the main program with PSXRecomp and the recomp-ui launcher; the town, tower and dungeon programs run on the interpreter first and are then compiled in the background.",
+  "notes": "Needs your own Baroque: Yuganda Mousou (SLPM-86328) with the English v1.02 fan patch applied, as CUE/BIN or CHD. Tested on Windows through the opening, menus, name entry and the first 3D area; deep floors, saving and the ending are not tested yet. RecompLauncher one-click setup and Recomp Achievements supported."
+}
